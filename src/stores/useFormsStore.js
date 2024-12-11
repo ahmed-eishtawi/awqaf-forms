@@ -90,23 +90,23 @@ const useForms = defineStore("forms-store", () => {
     // Broadcast the change
     channel.broadcast({
       action: "selectForm",
-      payload: {
-        form_number,
-        sides: sides.value,
-      },
+      payload: form_number,
     });
   };
 
   const clearSide = () => {
     selected_side.value = 0;
-    localStorage.removeItem("selected_side");
     channel.broadcast({ action: "clearSide" });
   };
 
   const clearForm = () => {
     student_choice.value = 0;
-    localStorage.removeItem("student_choice");
     channel.broadcast({ action: "clearForm" });
+  };
+
+  const chooseAnotherStudent = () => {
+    clearSide();
+    clearForm();
   };
 
   // Sync incoming broadcast messages
@@ -118,13 +118,8 @@ const useForms = defineStore("forms-store", () => {
         break;
 
       case "selectForm":
-        student_choice.value = data.payload.form_number;
-        sides.value = data.payload.sides;
-        localStorage.setItem(
-          "student_choice",
-          JSON.stringify(data.payload.form_number)
-        );
-        localStorage.setItem("sides", JSON.stringify(data.payload.sides));
+        student_choice.value = data.payload;
+        localStorage.setItem("student_choice", JSON.stringify(data.payload));
         break;
 
       case "clearSide":
@@ -176,6 +171,7 @@ const useForms = defineStore("forms-store", () => {
     selectForm,
     clearSide,
     clearForm,
+    chooseAnotherStudent,
   };
 });
 

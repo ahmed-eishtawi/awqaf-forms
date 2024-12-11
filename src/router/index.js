@@ -1,16 +1,12 @@
-/**
- * router/index.ts
- *
- * Automatic routes for `./src/pages/*.vue`
- */
+import { createRouter, createWebHistory } from "vue-router/auto";
 import index from "@/pages/index.vue";
 import examerView from "@/pages/examer-view.vue";
 import studentView from "@/pages/student-view.vue";
 import studentChoice from "@/pages/student-choice.vue";
+/* stores */
+import useFormsStore from "@/stores/useFormsStore.js";
 
-// Composables
-import { createRouter, createWebHistory } from "vue-router/auto";
-
+/* app routes */
 const routes = [
   {
     path: "/",
@@ -32,6 +28,10 @@ const routes = [
     name: "student-choice",
     component: studentChoice,
   },
+  {
+    path: "/:catchAll(.*)",
+    redirect: { name: "index" },
+  },
 ];
 
 const router = createRouter({
@@ -39,7 +39,23 @@ const router = createRouter({
   routes,
 });
 
-// Workaround for https://github.com/vitejs/vite/issues/11804
+// Route guard
+router.beforeEach((to, from, next) => {
+  /* initilaize the forms store */
+  const form_store = useFormsStore();
+
+  //
+  if (from.name === "student-view" && to.name !== "student-view") {
+    return next(false);
+  }
+
+  if (from.name === "student-choice" && from.name !== to.name) {
+    form_store.chooseAnotherStudent();
+  }
+
+  next();
+});
+
 router.onError((err, to) => {
   if (err?.message?.includes?.("Failed to fetch dynamically imported module")) {
     if (!localStorage.getItem("vuetify:dynamic-reload")) {
