@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: awqaf-forms-app
+    hostname: awqaf-forms-app
+    ports:
+      - "80"
+    networks:
+      - awqaf-forms-network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-proxy
+    depends_on:
+      - app
+    ports:
+      - "3000:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - awqaf-forms-network
+
+networks:
+  awqaf-forms-network:
+    driver: bridge
