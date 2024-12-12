@@ -13,14 +13,14 @@ services:
       - awqaf-forms-network
 
   nginx:
-    image: nginx:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: nginx-proxy
     depends_on:
       - app
     ports:
-      - "3000:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - "3000:80"  # Expose port 3000 on localhost
     networks:
       - awqaf-forms-network
 
