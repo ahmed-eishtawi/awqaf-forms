@@ -1,11 +1,36 @@
 <script setup>
-//
 import useFormsStore from "@/stores/useFormsStore.js";
 import { storeToRefs } from "pinia";
-
+import socket from "@/services/socket";
+//
+/*
+  store
+*/
 const { sides } = storeToRefs(useFormsStore()); /* make the sides reactive */
 
 const form_store = useFormsStore();
+
+/*
+  lifecycle hooks
+*/
+onMounted(() => {
+  if (!socket.socket.connected) {
+    console.log("connecting");
+    socket.connect();
+  }
+  socket.on("connect", () => {
+    console.log("connected");
+  });
+
+  /* get all sides */
+  socket.emit("get_all_sides", { sides: "all" });
+
+  /* listen for all sides */
+  socket.on("get_all_sides", (data) => {
+    form_store.setSides(data);
+  });
+});
+//
 </script>
 
 <template>

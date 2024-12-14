@@ -1,17 +1,50 @@
 <script setup>
+import socket from "@/services/socket";
 import useFormsStore from "@/stores/useFormsStore.js";
 import { storeToRefs } from "pinia";
-import { useRoute } from "vue-router";
-
-/*
-  route
-*/
-const route = useRoute();
 //
-
-const { student_choice, sides, selected_side } = storeToRefs(useFormsStore());
+/*
+  store
+*/
+const { student_choice, selected_side, current_side, side_forms } = storeToRefs(
+  useFormsStore()
+);
 
 const form_store = useFormsStore();
+/*
+  lifecycle hooks
+*/
+onMounted(() => {
+  if (!socket.socket.connected) {
+    socket.connect();
+  }
+  socket.on("connect", () => {
+    console.log("connected");
+  });
+
+  socket.on("get_selected_side", (data) => {
+    if (data.code == 404) {
+      console.log(data.error);
+      return;
+    }
+    selected_side.value = data.selected_side.id;
+    current_side.value = data.selected_side.title;
+    side_forms.value = [...data.result];
+
+    localStorage.setItem("side_forms", JSON.stringify(side_forms.value));
+    localStorage.setItem("selected_side", JSON.stringify(selected_side.value));
+    localStorage.setItem("current_side", JSON.stringify(current_side.value));
+  });
+
+  socket.on("get_selected_form", (data) => {
+    if (data.code == 404) {
+      console.log(data.error);
+      return;
+    }
+
+    student_choice.value = data.form_number;
+  });
+});
 //
 </script>
 
@@ -24,7 +57,7 @@ const form_store = useFormsStore();
             <div>
               <v-img src="../assets/awqaf-logo.svg" width="500" class="mb-5" />
               <h1 class="mt-5">
-                {{ sides.find((side) => side.id === selected_side)?.title }}
+                {{ "الجانب: " + current_side }}
               </h1>
             </div>
           </v-card-title>
@@ -73,10 +106,7 @@ const form_store = useFormsStore();
                 <span class="d-inline-block">
                   <h2 class="text-white mt-5">
                     <span
-                      v-if="
-                        sides.find((side) => side.id === selected_side)?.forms
-                          .length > 0
-                      "
+                      v-if="student_choice == 0 && side_forms?.length > 0"
                       class="pa-3 rounded-lg"
                       style="background-color: #003a4c"
                     >
@@ -90,6 +120,7 @@ const form_store = useFormsStore();
                       {{ "تم اختيار كل نماذج هذا الجانب!" }}
                     </span>
                   </h2>
+
                   <v-btn
                     @click="form_store.chooseAnotherStudent()"
                     :to="{ name: 'examer-view' }"
@@ -99,14 +130,7 @@ const form_store = useFormsStore();
                     height="50"
                     block
                   >
-                    <h2
-                      v-if="
-                        !sides.find((side) => side.id === selected_side)?.forms
-                          .length > 0
-                      "
-                    >
-                      اختيار نموذج اخر
-                    </h2>
+                    <h2 v-if="side_forms?.length != 0">اختيار نموذج اخر</h2>
                     <!--  -->
 
                     <h2 v-else>رجوع</h2>
