@@ -54,7 +54,7 @@ onMounted(() => {
       <v-card class="bg-transparent" flat>
         <v-card-item>
           <v-card-title class="d-flex justify-center mb-5">
-            <div>
+            <div class="d-flex flex-column justify-center align-center">
               <v-img src="../assets/awqaf-logo.svg" width="500" class="mb-5" />
               <h1 class="mt-5">
                 {{ "الجانب: " + current_side }}
