@@ -87,11 +87,11 @@ onMounted(() => {
                 getCurrentSideForms?.length > 0 &&
                 typeof getCurrentSideForms === 'object'
               "
-              class="ga-2 justify-center align-center"
+              class="ga-2 flex-wrap justify-center align-center"
               no-gutters
             >
               <v-col
-                cols="1"
+                cols="2"
                 v-for="form_number in getCurrentSideForms"
                 :key="form_number"
               >

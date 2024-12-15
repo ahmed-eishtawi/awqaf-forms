@@ -1,6 +1,7 @@
 import { io } from "socket.io-client";
+//
 
-const SOCKET_URL = "http://localhost";
+const SOCKET_URL = `http://${window.location.hostname}:3500`;
 
 const socket = io(SOCKET_URL, {
   transports: ["websocket"],

@@ -2,7 +2,6 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import socket from "@/services/socket";
 
-
 const useForms = defineStore("forms-store", () => {
   /*
     state

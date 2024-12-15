@@ -5,6 +5,7 @@ import studentView from "@/pages/student-view.vue";
 import studentChoice from "@/pages/student-choice.vue";
 /* stores */
 import useFormsStore from "@/stores/useFormsStore.js";
+import Dashboard from "@/pages/dashboard.vue";
 
 /* app routes */
 const routes = [
@@ -12,6 +13,11 @@ const routes = [
     path: "/",
     name: "index",
     component: index,
+  },
+  {
+    path: "/dashboard",
+    name: "dashboard",
+    component: Dashboard,
   },
   {
     path: "/examer-view",
